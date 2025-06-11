@@ -2,14 +2,15 @@
 // Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
 // =================================================================================
 
-package hello
+package account
 
 import (
 	"context"
 
-	"shopx/api/hello/v1"
+	"shopx/api/account/v1"
 )
 
-type IHelloV1 interface {
-	Hello(ctx context.Context, req *v1.HelloReq) (res *v1.HelloRes, err error)
+type IAccountV1 interface {
+	Login(ctx context.Context, req *v1.LoginReq) (res *v1.LoginRes, err error)
+	Register(ctx context.Context, req *v1.RegisterReq) (res *v1.RegisterRes, err error)
 }

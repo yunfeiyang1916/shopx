@@ -13,7 +13,7 @@ build: cli.install
 # Parse api and generate controller/sdk.
 .PHONY: ctrl
 ctrl: cli.install
-	@gf gen ctrl
+	@gf gen ctrl -n -m
 
 # Generate Go files for DAO/DO/Entity.
 .PHONY: dao
