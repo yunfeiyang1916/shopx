@@ -6,11 +6,11 @@
 package main
 
 import (
-	"shopx/internal/biz"
-	"shopx/internal/conf"
-	"shopx/internal/data"
-	"shopx/internal/server"
-	"shopx/internal/service"
+	"shopx/app/account-srv/internal/biz"
+	"shopx/app/account-srv/internal/conf"
+	"shopx/app/account-srv/internal/data"
+	"shopx/app/account-srv/internal/server"
+	"shopx/app/account-srv/internal/service"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"

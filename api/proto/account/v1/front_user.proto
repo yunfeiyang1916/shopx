@@ -1,0 +1,450 @@
+syntax = "proto3";
+
+package account.v1;
+
+option go_package = "shopx/api/gen/account/v1;v1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+import "base/v1/base.proto";
+
+service FrontLogin {
+  rpc Login (LoginRequest) returns (LoginLoginReply){
+    option (google.api.http) = {
+      post: "/front/account/login/login",
+      body: "*",
+    };
+  };
+
+  rpc Register (RegisterRequest) returns (LoginLoginReply){
+    option (google.api.http) = {
+      post: "/front/account/login/register",
+      body: "*",
+    };
+  };
+
+  rpc Logout (RegisterRequest) returns (LoginLoginReply){
+    option (google.api.http) = {
+      get: "/front/account/login/logout",
+    };
+  };
+}
+
+message LoginRequest {
+  string username = 1 [(validate.rules).string = {min_len: 1, max_len: 100}];
+  string password = 2[(validate.rules).string = {min_len: 1, max_len: 100}];
+  // 验证码
+  string verify_code = 3;
+  // 验证码key
+  string verify_key = 4;
+  // 密码是否加密
+  bool encrypt = 5;
+}
+
+message LoginLoginReply {
+  string token = 1;
+  string user_id = 2;
+}
+
+message RegisterRequest {
+  string user_account = 1 [(validate.rules).string = {min_len: 1, max_len: 100}];
+  string password = 2[(validate.rules).string = {min_len: 1, max_len: 100}];
+  // 验证码
+  string verify_code = 3;
+  // 验证码key
+  string verify_key = 4;
+  // 密码是否加密
+  bool encrypt = 5;
+  // 注册方式=>BindConnectCode
+  int32 bind_type = 6;
+  // 活动编号
+  int32 activity_id = 7;
+  // 来源用户编号
+  uint32 source_user_id = 8;
+  // 渠道码
+  string source_ucc_code = 9;
+}
+
+service User{
+  rpc GetUser (google.protobuf.Empty) returns (GetUserReply){
+    option (google.api.http) = {
+      get: "/front/account/user/info",
+    };
+  };
+
+  rpc UpdateUser (UpdateUserRequest) returns (GetUserReply){
+    option (google.api.http) = {
+      post: "/front/account/user/bindMobile",
+      body: "*",
+    };
+  };
+  // 绑定手机号
+  rpc BindMobile (BindMobileRequest) returns (LoginLoginReply){
+    option (google.api.http) = {
+      post: "/front/account/user/bindMobile",
+      body: "*",
+    };
+  };
+
+  // 解绑手机号
+  rpc UnBindMobile (BindMobileRequest) returns (LoginLoginReply){
+    option (google.api.http) = {
+      post: "/front/account/user/unBindMobile",
+      body: "*",
+    };
+  };
+
+  // 重设密码接口
+  rpc ResetPassword (ResetPasswordRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/front/account/user/resetPassword",
+      body: "*",
+    };
+  };
+  // 修改密码
+  rpc ChangePassword (ResetPasswordRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/front/account/user/changePassword",
+      body: "*",
+    };
+  };
+  // 实名认证
+  rpc Certificate (CertificateRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/front/account/user/saveCertificate",
+      body: "*",
+    };
+  };
+}
+
+message GetUserReply {
+  // 用户编号
+  uint32 user_id = 1;
+  // 用户账号
+  string user_account = 2;
+  // 用户昵称
+  string user_nickname = 3;
+  // 用户头像
+  string user_avatar = 4;
+  // 状态(ENUM):0-锁定;1-已激活;2-未激活;
+  uint32 user_state = 5;
+  // 手机号码(mobile)
+  string user_mobile = 6;
+  // 国家编码
+  string user_intl = 7;
+  // 性别(ENUM):0-保密;1-男;  2-女;
+  uint32 user_gender = 8;
+  // 生日(DATE)
+  google.protobuf.Timestamp user_birthday = 9;
+  // 用户邮箱(email)
+  string user_email = 10;
+  // 等级编号
+  uint32 user_level_id = 11;
+  // 真实姓名
+  string user_realname = 12;
+  // 身份证
+  string user_idcard = 13;
+  // 身份证图片(DTO)
+  string user_idcard_images = 14;
+  // 认证状态(ENUM):0-未认证;1-待审核;2-认证通过;3-认证失败
+  uint32 user_is_authentication = 15;
+  // 用户标签(DOT)
+  string tag_ids = 16;
+  // 用户来源(ENUM):2310-其它;2311-pc;2312-H5;2313-APP;2314-小程序;2315-公众号
+  uint32 user_from = 17;
+  // 新人标识(BOOL):0-不是;1-是
+  bool user_new = 18;
+  // 身份证图片(DOT)
+  repeated string user_idcard_image_list = 19;
+  // 货币编号
+  uint32 currency_id = 20;
+  // 左符号
+  string currency_symbol_left = 21;
+  // 用户资金
+  double user_money = 22;
+  // 冻结资金:待结算余额
+  double user_money_frozen = 23;
+  // 充值卡余额
+  double user_recharge_card = 24;
+  // 冻结充值卡:待结算
+  double user_recharge_card_frozen = 25;
+  // 积分
+  double user_points = 26;
+  // 冻结积分
+  double user_points_frozen = 27;
+  // 经验值
+  double user_exp = 28;
+  // 可用信用
+  double user_credit = 29;
+  // 冻结额度
+  double user_credit_frozen = 30;
+  // 使用信用
+  double user_credit_used = 31;
+  // 信用额度
+  double user_credit_total = 32;
+  // 保证金
+  double user_margin = 33;
+  // 红包额度
+  double user_redpack = 34;
+  // 红包冻结额度
+  double user_redpack_frozen = 35;
+  // 权限列表
+  repeated string permissions = 36;
+  // 角色列表
+  repeated string roles = 37;
+  // 角色编号:0-用户;2-商家;3-门店;9-平台;
+  uint32 role_id = 38;
+  // 分站编号:0-总站
+  uint32 site_id = 39;
+  // 店铺编号
+  uint32 store_id = 40;
+  // 门店编号
+  uint32 chain_id = 41;
+  // 后台管理:admin=1;移动端front=0
+  uint32 client_id = 42;
+  // 详细地址
+  string ud_address = 43;
+  // 等级名称
+  string user_level_name = 44;
+  // 注册时间
+  google.protobuf.Timestamp user_reg_time = 45;
+  // 登录时间
+  google.protobuf.Timestamp user_login_time = 46;
+  // 标签标题(DOT)
+  string tag_titles = 47;
+  // 标签标题(DOT)
+  repeated string tag_title_list = 48;
+  // 分组名称(DOT)
+  string tag_group_names = 49;
+  // 用户标签(DOT)
+  string tag_ids_duplicate = 50;
+  // 本月订单
+  int64 month_order = 51;
+  // 总计订单
+  int64 total_order = 52;
+  // 本月消费金额
+  double month_trade = 53;
+  // 总消费金额
+  double total_trade = 54;
+  // 优惠券数量
+  int64 voucher = 55;
+  // 待付款数量
+  int64 wait_pay_num = 56;
+  // 收藏数量
+  int64 favorites_goods_num = 57;
+  // 关注数量
+  int64 concern_num = 58;
+  // 未读消息数量
+  int32 unread_number = 59;
+  // 佣金总额:历史总额度
+  double commission_amount = 60;
+  // 累计佣金
+  double user_commission_now = 61;
+  // 本月预估收益
+  double month_commission_buy = 62;
+  // 上级用户编号
+  uint32 user_parent_id = 63;
+}
+
+message UpdateUserRequest {
+  // 用户编号
+  uint32 user_id = 1;
+  // 用户昵称
+  string user_nickname = 2;
+  // 用户头像
+  string user_avatar = 3;
+  // 用户邮箱(email)
+  string user_email = 4;
+  // 生日(DATE)
+  google.protobuf.Timestamp user_birthday = 5;
+}
+
+message BindMobileRequest {
+  // 验证码
+  string verify_code = 1;
+  // 验证码 KEY
+  string verify_key = 2;
+}
+
+message ResetPasswordRequest {
+  // 用户密码
+  string password = 1;
+  // 用户旧密码
+  string old_password = 2;
+  // 验证码
+  string verify_code = 3;
+  // 验证码 KEY
+  string verify_key = 4;
+  // 密码是否加密
+  bool encrypt = 5;
+  // 注册方式=>BindConnectCode
+  uint32 bind_type = 6;
+}
+
+message CertificateRequest {
+  // 用户编号
+  uint32 user_id = 1;
+  // 真实姓名
+  string user_realname = 2;
+  // 身份证
+  string user_idcard = 3;
+  // 身份证图片(DTO)
+  string user_idcard_images = 4;
+}
+
+// UserDeliveryAddress 定义用户收货地址相关的 RPC 服务
+service UserDeliveryAddress {
+  // 创建用户地址接口
+  rpc CreateUserDeliveryAddress (CreateUserDeliveryAddressReq) returns (CreateUserDeliveryAddressRes){
+    option (google.api.http) = {
+      post: "/front/account/userDeliveryAddress/add",
+      body: "*",
+    };
+  };
+  // 更新用户地址接口
+  rpc UpdateUserDeliveryAddress (UpdateUserDeliveryAddressReq) returns (UpdateUserDeliveryAddressRes){
+    option (google.api.http) = {
+      post: "/front/account/userDeliveryAddress/save",
+      body: "*",
+    };
+  };
+  // 获取用户地址接口
+  rpc GetUserDeliveryAddress (GetUserDeliveryAddressReq) returns (CreateUserDeliveryAddressRes){
+    option (google.api.http) = {
+      get: "/front/account/userDeliveryAddress/get",
+    };
+  };
+  // 删除用户地址接口
+  rpc DeleteUserDeliveryAddress (DeleteUserDeliveryAddressReq) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/front/account/userDeliveryAddress/remove",
+      body: "*",
+    };
+  };
+  // 地址列表接口
+  rpc ListUserDeliveryAddress (ListUserDeliveryAddressReq) returns (UserDeliveryAddressListRes);
+}
+
+message CreateUserDeliveryAddressReq {
+  // 联系人
+  string ud_name = 1;
+  // 国家编码
+  string ud_intl = 2;
+  // 手机号码
+  string ud_mobile = 3;
+  // 联系电话
+  string ud_telephone = 4;
+  // 省编号
+  uint32 ud_province_id = 5;
+  // 省份
+  string ud_province = 6;
+  // 市编号
+  uint32 ud_city_id = 7;
+  // 市
+  string ud_city = 8;
+  // 县编号
+  uint32 ud_county_id = 9;
+  // 县区
+  string ud_county = 10;
+  // 详细地址
+  string ud_address = 11;
+  // 邮政编码
+  string ud_postalcode = 12;
+  // 地址标签(ENUM):1001-家里;1002-公司
+  string ud_tag_name = 13;
+  // 是否默认(BOOL):0-非默认;1-默认
+  bool ud_is_default = 14;
+}
+
+message CreateUserDeliveryAddressRes {
+  // 地址编号
+  uint32 ud_id = 1;
+  // 用户编号
+  uint32 user_id = 2;
+  // 联系人
+  string ud_name = 3;
+  // 国家编码
+  string ud_intl = 4;
+  // 手机号码
+  string ud_mobile = 5;
+  // 联系电话
+  string ud_telephone = 6;
+  // 省编号
+  uint32 ud_province_id = 7;
+  // 省份
+  string ud_province = 8;
+  // 市编号
+  uint32 ud_city_id = 9;
+  // 市
+  string ud_city = 10;
+  // 县编号
+  uint32 ud_county_id = 11;
+  // 县区
+  string ud_county = 12;
+  // 详细地址
+  string ud_address = 13;
+  // 邮政编码
+  string ud_postalcode = 14;
+  // 地址标签(ENUM):1001-家里;1002-公司
+  string ud_tag_name = 15;
+  // 经度
+  double ud_longitude = 16;
+  // 纬度
+  double ud_latitude = 17;
+  // 添加时间
+  google.protobuf.Timestamp ud_time = 18;
+  // 是否默认(BOOL):0-非默认;1-默认
+  bool ud_is_default = 19;
+}
+
+message UpdateUserDeliveryAddressReq {
+  // 地址编号
+  uint32 ud_id = 1;
+  // 联系人
+  string ud_name = 2;
+  // 手机号码
+  string ud_mobile = 3;
+  // 国家编码
+  string ud_intl = 4;
+  // 详细地址
+  string ud_address = 5;
+  // 是否默认(BOOL):0-非默认;1-默认
+  bool ud_is_default = 6;
+}
+
+message UpdateUserDeliveryAddressRes {
+  // 地址编号
+  uint32 ud_id = 1;
+}
+
+message GetUserDeliveryAddressReq {
+  // 地址编号
+  uint32 ud_id = 1;
+}
+
+message DeleteUserDeliveryAddressReq {
+  // 地址编号
+  uint32 ud_id = 1;
+}
+
+message ListUserDeliveryAddressReq {
+  base.v1.BaseList base_list = 1;
+  // 联系人
+  string ud_name = 2;
+}
+
+message UserDeliveryAddressListRes {
+  // 分页数据内容
+  repeated ListUserDeliveryAddressReq items = 1;
+  // 分页号码
+  int32 page = 2;
+  // 总页数
+  int32 total = 3;
+  // 数据总数
+  int32 records = 4;
+  // 单页数量
+  int32 size = 5;
+}
+

@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package base.v1;
+
+// BaseOrder 对应 Go 中的 BaseOrder 结构体
+message BaseOrder {
+  string sort = 1;
+  string sidx = 2;
+}
+
+// WhereExt 对应 Go 中的 WhereExt 结构体
+message WhereExt {
+  string column = 1;
+  oneof val {
+    string str_val = 2;
+    int32 int_val = 3;
+    bool bool_val = 4;
+    double double_val = 5;
+  }
+  int32 symbol = 6;
+}
+
+// BaseList 对应 Go 中的 BaseList 结构体
+message BaseList {
+  // 页码
+  int32 page = 1;
+  int32 size = 2;
+  // 排序条件
+  string sort = 3;
+  // 排序字段
+  string sidx = 4;
+  repeated BaseOrder order = 5;
+  repeated WhereExt where_ext = 6;
+  repeated WhereExt where_like = 7;
+}

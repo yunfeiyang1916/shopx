@@ -1,9 +1,11 @@
 package server
 
 import (
-	v1 "shopx/api/helloworld/v1"
+	v1 "shopx/api/gen/account/v1"
 	"shopx/app/account-srv/internal/conf"
 	"shopx/app/account-srv/internal/service"
+
+	"github.com/go-kratos/kratos/v2/middleware/validate"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
@@ -11,10 +13,11 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, login *service.FrontLoginService, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
+			validate.Validator(),
 		),
 	}
 	if c.Http.Network != "" {
@@ -27,6 +30,6 @@ func NewHTTPServer(c *conf.Server, greeter *service.GreeterService, logger log.L
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	v1.RegisterGreeterHTTPServer(srv, greeter)
+	v1.RegisterFrontLoginHTTPServer(srv, login)
 	return srv
 }

@@ -1,7 +1,7 @@
 package server
 
 import (
-	v1 "shopx/api/helloworld/v1"
+	v1 "shopx/api/gen/account/v1"
 	"shopx/app/account-srv/internal/conf"
 	"shopx/app/account-srv/internal/service"
 
@@ -11,7 +11,7 @@ import (
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Server, login *service.FrontLoginService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -27,6 +27,6 @@ func NewGRPCServer(c *conf.Server, greeter *service.GreeterService, logger log.L
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
 	srv := grpc.NewServer(opts...)
-	v1.RegisterGreeterServer(srv, greeter)
+	v1.RegisterFrontLoginServer(srv, login)
 	return srv
 }
