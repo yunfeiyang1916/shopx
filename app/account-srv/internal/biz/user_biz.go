@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/gogf/gf/v2/errors/gerror"
 )
 
 type UserRepo interface {
@@ -26,6 +27,8 @@ func NewUserUsecase(repo UserRepo, logger log.Logger) *UserUsecase {
 func (u *UserUsecase) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginLoginReply, error) {
 	user, err := u.repo.GetUserByPassword(ctx, req.Username, req.Password)
 	if err != nil {
+		err = gerror.Wrap(err, "")
+		u.log.Errorf("get user by password error: %+v", err)
 		return nil, err
 	}
 	return &pb.LoginLoginReply{

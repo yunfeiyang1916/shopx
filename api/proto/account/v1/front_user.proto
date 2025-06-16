@@ -11,6 +11,7 @@ import "validate/validate.proto";
 import "base/v1/base.proto";
 
 service FrontLogin {
+  // 前后台通用登录接口
   rpc Login (LoginRequest) returns (LoginLoginReply){
     option (google.api.http) = {
       post: "/front/account/login/login",
